@@ -1,11 +1,12 @@
 'use strict';
 
-const STORAGE_KEY = 'nova_weekly_tracker_v3';
+const STORAGE_KEY = 'nova_weekly_tracker_v5';
 
 let state = {
   income: 0,
-  debts: [],     // { id, name, amount, dueDay }
-  expenses: []   // { id, title, amount, category, date }
+  debts: [],     // { id, name, amount, dueDay } -> Guía de ahorro
+  expenses: [],  // { id, title, amount, category, date } -> Gastos de la semana actual
+  history: []    // { id, closedAt, income, totalSpent, balance, expenses } -> Semanas pasadas
 };
 
 const el = id => document.getElementById(id);
@@ -25,7 +26,6 @@ function formatMXN(amount) {
   }).format(amount);
 }
 
-/* Calcula días y semanas restantes hasta la próxima fecha de pago (día 1..31) */
 function getNextPaymentInfo(dueDay) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -39,7 +39,6 @@ function getNextPaymentInfo(dueDay) {
   let targetMonth = today.getMonth();
   let targetDate = new Date(targetYear, targetMonth, clampDay(targetYear, targetMonth, dueDay));
 
-  // Si la fecha de pago ya pasó este mes, calcular para el próximo mes
   if (targetDate < today) {
     targetMonth += 1;
     if (targetMonth > 11) {
@@ -52,7 +51,6 @@ function getNextPaymentInfo(dueDay) {
   const diffMs = targetDate - today;
   const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
   const weeksLeft = Math.max(1, Math.ceil(daysLeft / 7));
-
   const dateText = targetDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
 
   return { daysLeft, weeksLeft, dateText };
@@ -72,9 +70,10 @@ function loadState() {
       state.income = Number(saved.income) || 0;
       state.debts = Array.isArray(saved.debts) ? saved.debts : [];
       state.expenses = Array.isArray(saved.expenses) ? saved.expenses : [];
+      state.history = Array.isArray(saved.history) ? saved.history : [];
     }
   } catch {
-    state = { income: 0, debts: [], expenses: [] };
+    state = { income: 0, debts: [], expenses: [], history: [] };
   }
   el('weeklyIncome').value = state.income > 0 ? state.income : '';
   el('expDate').value = new Date().toISOString().split('T')[0];
@@ -94,13 +93,12 @@ function toggleDrawer(drawerId) {
 }
 
 function render() {
-  /* 1. RENDERIZAR DEUDAS Y CALCULAR AHORRO SEMANAL REQUERIDO */
+  /* 1. DEUDAS (META DE AHORRO SEMANAL) */
   const debtList = el('debtList');
   debtList.innerHTML = '';
 
   let weeklyDebtSave = 0;
 
-  // Ordenar deudas por proximidad de fecha de pago
   const sortedDebts = [...state.debts].sort((a, b) => {
     return getNextPaymentInfo(a.dueDay).daysLeft - getNextPaymentInfo(b.dueDay).daysLeft;
   });
@@ -122,8 +120,8 @@ function render() {
       </div>
       <div class="debt-right">
         <div>
-          <span class="debt-weekly-tag">Ahorrar hoy:</span>
-          <span class="debt-amount">${formatMXN(weeklyShare)}</span>
+          <span class="debt-weekly-tag">Ahorrar/sem:</span>
+          <span class="debt-amount" style="color: #3ddc84;">${formatMXN(weeklyShare)}</span>
         </div>
         <button class="btn-del" data-type="debt" data-id="${debt.id}" aria-label="Eliminar">×</button>
       </div>
@@ -131,7 +129,7 @@ function render() {
     debtList.appendChild(li);
   });
 
-  /* 2. RENDERIZAR GASTOS REGISTRADOS */
+  /* 2. GASTOS DE ESTA SEMANA */
   const expList = el('expenseList');
   expList.innerHTML = '';
 
@@ -159,37 +157,83 @@ function render() {
     expList.appendChild(li);
   });
 
-  /* 3. CALCULAR TOTALES Y SALDO LIBRE */
-  const totalCommitted = weeklyDebtSave + totalSpent;
-  const freeMoney = state.income - totalCommitted;
-  const pct = state.income > 0 ? Math.min(100, Math.round((totalCommitted / state.income) * 100)) : 0;
+  /* 3. HISTORIAL DE SEMANAS PASADAS */
+  const historyList = el('historyList');
+  historyList.innerHTML = '';
 
-  el('resFree').textContent = formatMXN(freeMoney);
+  state.history.forEach(week => {
+    const detailsHtml = week.expenses.length > 0
+      ? week.expenses.map(e => `<div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#8e8ca0; margin-top:4px;"><span>• ${e.title} (${e.category})</span><span>-${formatMXN(e.amount)}</span></div>`).join('')
+      : '<div style="font-size:0.75rem; color:#8e8ca0; margin-top:4px;">Sin gastos registrados</div>';
+
+    const li = document.createElement('li');
+    li.className = 'debt-item';
+    li.style.flexDirection = 'column';
+    li.style.alignItems = 'stretch';
+    li.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="debt-left">
+          <div class="debt-icon c-Otro">📅</div>
+          <div class="debt-meta">
+            <strong>Semana cerrada: ${week.closedAt}</strong>
+            <small>Ganado: ${formatMXN(week.income)} • Gastado: ${formatMXN(week.totalSpent)}</small>
+          </div>
+        </div>
+        <div class="debt-right">
+          <div>
+            <span class="debt-weekly-tag">Sobró:</span>
+            <span class="debt-amount" style="color: ${week.balance >= 0 ? '#3ddc84' : '#ff6b6b'};">${formatMXN(week.balance)}</span>
+          </div>
+          <button class="btn-del" data-type="history" data-id="${week.id}" aria-label="Eliminar">×</button>
+        </div>
+      </div>
+      <div style="border-top: 1px solid rgba(255,255,255,0.06); margin-top: 10px; padding-top: 6px;">
+        ${detailsHtml}
+      </div>
+    `;
+    historyList.appendChild(li);
+  });
+
+  /* 4. TOTALES Y SALDO LIBRE */
+  const availableBalance = state.income - totalSpent;
+  const spentPct = state.income > 0 ? Math.min(100, Math.round((totalSpent / state.income) * 100)) : 0;
+
+  el('resFree').textContent = formatMXN(availableBalance);
   el('resWeeklyDebt').textContent = formatMXN(weeklyDebtSave);
   el('resSpent').textContent = `Gastado: ${formatMXN(totalSpent)}`;
   el('resIncome').textContent = formatMXN(state.income);
-  el('usedProgress').style.width = `${pct}%`;
-  el('usedPct').textContent = `${pct}%`;
+  el('usedProgress').style.width = `${spentPct}%`;
+  el('usedPct').textContent = `${spentPct}%`;
 
   el('debtCount').textContent = `${state.debts.length} ${state.debts.length === 1 ? 'deuda' : 'deudas'}`;
   el('expCount').textContent = `${state.expenses.length} ${state.expenses.length === 1 ? 'gasto' : 'gastos'}`;
+  el('historyCount').textContent = `${state.history.length} ${state.history.length === 1 ? 'guardada' : 'guardadas'}`;
 
   const hero = el('heroCard');
   const pill = el('statusPill');
   const advice = el('resAdvice');
 
-  if (state.income === 0 && totalCommitted === 0) {
+  if (state.income === 0 && totalSpent === 0) {
     hero.classList.remove('deficit');
     pill.textContent = '•';
-    advice.textContent = 'Ingresa tu salario semanal para calcular';
-  } else if (freeMoney < 0) {
+    advice.textContent = weeklyDebtSave > 0
+      ? `Meta semanal de ahorro para deudas: ${formatMXN(weeklyDebtSave)}`
+      : 'Ingresa tu salario semanal para iniciar';
+  } else if (availableBalance < 0) {
     hero.classList.add('deficit');
     pill.textContent = '!';
-    advice.textContent = `Te faltan ${formatMXN(Math.abs(freeMoney))} para cubrir deudas y gastos`;
+    advice.textContent = `Excediste tu salario por ${formatMXN(Math.abs(availableBalance))}`;
+  } else if (weeklyDebtSave > 0) {
+    hero.classList.remove('deficit');
+    pill.textContent = '✓';
+    const afterSaving = availableBalance - weeklyDebtSave;
+    advice.textContent = afterSaving >= 0
+      ? `Si apartas ${formatMXN(weeklyDebtSave)} de deudas, te quedan ${formatMXN(afterSaving)}`
+      : `Te faltan ${formatMXN(Math.abs(afterSaving))} para cubrir la meta de ahorro`;
   } else {
     hero.classList.remove('deficit');
     pill.textContent = '✓';
-    advice.textContent = `Ya descontando ahorro de deudas y gastos`;
+    advice.textContent = `Has gastado el ${spentPct}% de tu salario semanal`;
   }
 }
 
@@ -271,7 +315,6 @@ el('debtForm').addEventListener('submit', e => {
   el('debtDrawer').hidden = true;
 });
 
-/* ELIMINAR GASTO O DEUDA */
 document.addEventListener('click', e => {
   if (!e.target.classList.contains('btn-del')) return;
   const id = Number(e.target.dataset.id);
@@ -281,14 +324,34 @@ document.addEventListener('click', e => {
     state.debts = state.debts.filter(d => d.id !== id);
   } else if (type === 'expense') {
     state.expenses = state.expenses.filter(exp => exp.id !== id);
+  } else if (type === 'history') {
+    state.history = state.history.filter(h => h.id !== id);
   }
 
   saveState();
   render();
 });
 
-/* NUEVA SEMANA (LIMPIA SALARIO Y GASTOS DE LA SEMANA, MANTIENE TUS DEUDAS FIJAS) */
-el('btnResetWeek').addEventListener('click', () => {
+/* CERRAR SEMANA (ARCHIVA LA SEMANA ACTUAL EN HISTORIAL Y LIMPIA PARA LA NUEVA) */
+el('btnArchiveWeek').addEventListener('click', () => {
+  if (state.income === 0 && state.expenses.length === 0) return;
+
+  const totalSpent = state.expenses.reduce((acc, item) => acc + item.amount, 0);
+  const closedAt = new Date().toLocaleDateString('es-MX', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+
+  state.history.unshift({
+    id: Date.now(),
+    closedAt,
+    income: state.income,
+    totalSpent,
+    balance: state.income - totalSpent,
+    expenses: [...state.expenses]
+  });
+
   state.income = 0;
   state.expenses = [];
   el('weeklyIncome').value = '';
@@ -303,19 +366,18 @@ document.querySelectorAll('.nav-item').forEach(btn => {
     btn.classList.add('active');
 
     const tab = btn.dataset.tab;
-    el('sectionExpenses').hidden = tab === 'debts';
-    el('sectionDebts').hidden = tab === 'expenses';
+    el('sectionExpenses').hidden = tab !== 'all' && tab !== 'expenses';
+    el('sectionDebts').hidden = tab !== 'all' && tab !== 'debts';
+    el('sectionHistory').hidden = tab !== 'history';
   });
 });
 
-/* FECHA EN HEADER */
 el('todayLabel').textContent = new Date().toLocaleDateString('es-MX', {
   weekday: 'long',
   day: 'numeric',
   month: 'short'
 });
 
-/* REGISTRO SERVICE WORKER */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
