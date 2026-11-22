@@ -35,7 +35,7 @@
       </div>
     </header>
 
-    <!-- TARJETA PRINCIPAL DEGRADADA (SALDO LIBRE REAL) -->
+    <!-- TARJETA PRINCIPAL DEGRADADA -->
     <section class="hero-card" id="heroCard">
       <div class="hero-content">
         <span class="hero-label">Saldo libre disponible</span>
@@ -54,7 +54,7 @@
       </div>
     </section>
 
-    <!-- TARJETA DIVIDIDA (AHORRO DEUDAS VS SALARIO Y GASTOS) -->
+    <!-- TARJETA DIVIDIDA -->
     <section class="split-card">
       <div class="split-col">
         <div class="split-head">
@@ -104,9 +104,9 @@
         <span class="act-circle green">$</span>
         <span>Salario<br>Semanal</span>
       </button>
-      <button type="button" class="action-btn" id="btnResetWeek">
-        <span class="act-circle pink">↺</span>
-        <span>Nueva<br>Semana</span>
+      <button type="button" class="action-btn" id="btnArchiveWeek">
+        <span class="act-circle pink">📦</span>
+        <span>Cerrar<br>Semana</span>
       </button>
     </section>
 
@@ -161,7 +161,7 @@
       </form>
     </section>
 
-    <!-- PESTAÑA ACTIVA: MOVIMIENTOS / DEUDAS -->
+    <!-- SECCIÓN 1: GASTOS ACTUALES -->
     <section class="list-section" id="sectionExpenses">
       <div class="list-header">
         <h2>
@@ -169,13 +169,14 @@
             <circle cx="12" cy="12" r="10"/>
             <polyline points="12 6 12 12 16 14"/>
           </svg>
-          Gastos de la Semana
+          Gastos de esta Semana
         </h2>
         <span class="list-count" id="expCount">0 gastos</span>
       </div>
       <ul id="expenseList" class="debt-list"></ul>
     </section>
 
+    <!-- SECCIÓN 2: DEUDAS FIJAS -->
     <section class="list-section" id="sectionDebts">
       <div class="list-header">
         <h2>
@@ -189,21 +190,40 @@
       </div>
       <ul id="debtList" class="debt-list"></ul>
     </section>
+
+    <!-- SECCIÓN 3: HISTORIAL DE SEMANAS PASADAS -->
+    <section class="list-section" id="sectionHistory" hidden>
+      <div class="list-header">
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v5h5"/>
+            <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/>
+          </svg>
+          Semanas Anteriores
+        </h2>
+        <span class="list-count" id="historyCount">0 guardadas</span>
+      </div>
+      <ul id="historyList" class="debt-list"></ul>
+    </section>
   </main>
 
-  <!-- BARRA INFERIOR ESTILO iOS -->
+  <!-- BARRA INFERIOR ESTILO iOS (4 PESTAÑAS) -->
   <nav class="bottom-nav">
-    <button type="button" class="nav-item active" data-tab="all" id="navHome">
+    <button type="button" class="nav-item active" data-tab="all">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3l9-8z"/></svg>
       <span>Inicio</span>
     </button>
-    <button type="button" class="nav-item" data-tab="expenses" id="navExpenses">
+    <button type="button" class="nav-item" data-tab="expenses">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <span>Gastos</span>
     </button>
-    <button type="button" class="nav-item" data-tab="debts" id="navDebts">
+    <button type="button" class="nav-item" data-tab="debts">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      <span>Fechas Pago</span>
+      <span>Deudas</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/></svg>
+      <span>Historial</span>
     </button>
   </nav>
 
