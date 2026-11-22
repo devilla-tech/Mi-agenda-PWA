@@ -1,306 +1,176 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GENERADOR 🔥 SENSI FREE FIRE | Codixs Games</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Press+Start+2P&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --ff-red-primary: #ff4d4d; /* Rojo FF */
-            --ff-yellow-accent: #ffcc00; /* Amarillo FF */
-            --ff-blue-neon: #00eaff; /* Azul neón */
-            --bg-dark: #120a16; /* Fondo oscuro morado */
-            --card-dark: #1f112e; /* Fondo de caja más oscuro */
-            --text-light: #f0f0f0; /* Texto claro */
-        }
-
-        body {
-            font-family: 'Orbitron', sans-serif;
-            background-color: var(--bg-dark);
-            background-image: url('https://i.imgur.com/k9bT6tD.png'); /* Fondo de textura/patrón */
-            background-size: cover;
-            background-attachment: fixed;
-            color: var(--text-light);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            justify-content: center;
-            overflow-x: hidden; /* Evita scroll horizontal */
-        }
-
-        /* Animación de fondo */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(255, 77, 77, 0.1) 0%, transparent 70%),
-                        radial-gradient(circle at top left, rgba(0, 234, 255, 0.15) 0%, transparent 60%);
-            z-index: -1;
-            animation: pulseBg 20s infinite alternate;
-        }
-
-        @keyframes pulseBg {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
-        }
-
-        /* --- CONTENEDOR PRINCIPAL --- */
-        .container {
-            width: 90%;
-            max-width: 650px;
-            margin: 20px auto; /* Menos margen arriba para centrar mejor */
-            padding: 0;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* --- CAJA DEL GENERADOR --- */
-        .generator-box {
-            background: var(--card-dark);
-            border-radius: 25px;
-            padding: 35px 30px;
-            border: 4px solid var(--ff-red-primary); /* Borde rojo */
-            box-shadow: 0 0 40px rgba(255, 77, 77, 0.6), 0 0 15px rgba(0, 234, 255, 0.3); /* Doble sombra neón */
-            text-align: center;
-            animation: bounceIn 1s ease-out;
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            60% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-
-        h1, h2 {
-            font-family: 'Bangers', cursive; /* Fuente de cómic */
-            color: var(--ff-yellow-accent);
-            text-shadow: 3px 3px 0px var(--ff-red-primary); /* Borde en el texto */
-            font-size: clamp(2.2rem, 5vw, 3.5rem); /* Tamaño responsivo */
-            margin-bottom: 25px;
-        }
-        h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin-top: 0; }
-
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        select, input[type="text"] {
-            padding: 18px 20px;
-            border-radius: 10px;
-            background: rgba(0,0,0,0.4); /* Fondo semi-transparente */
-            border: 2px solid var(--ff-blue-neon); /* Borde azul neón */
-            color: var(--text-light);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            box-shadow: 0 0 10px rgba(0, 234, 255, 0.4);
-            transition: all 0.3s ease;
-        }
-        select:focus, input[type="text"]:focus {
-            border-color: var(--ff-yellow-accent);
-            box-shadow: 0 0 15px var(--ff-yellow-accent);
-            outline: none;
-        }
-        input::placeholder { color: #aaa; }
-
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: var(--ff-blue-neon);
-            margin-top: 10px;
-        }
-        .checkbox-container input {
-            width: 25px;
-            height: 25px;
-            accent-color: var(--ff-red-primary); /* Color del checkbox */
-        }
-
-        .btn-generate {
-            background: linear-gradient(45deg, var(--ff-red-primary), #ff00ff); /* Degradado rojo-magenta */
-            color: var(--text-light);
-            border: none;
-            padding: 20px;
-            border-radius: 12px;
-            font-family: 'Press Start 2P', cursive; /* Fuente retro */
-            font-size: 1rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 0 0 25px rgba(255, 77, 77, 0.7);
-            transition: all 0.3s ease;
-            margin-top: 30px;
-        }
-
-        .btn-generate:hover {
-            transform: translateY(-5px) scale(1.03);
-            box-shadow: 0 5px 30px rgba(255, 77, 77, 0.9);
-            filter: brightness(1.1);
-        }
-
-        /* --- RESULTADOS --- */
-        #resultado {
-            display: none;
-            margin-top: 35px;
-            padding: 25px;
-            background: rgba(0,0,0,0.6); /* Fondo semi-transparente */
-            border-radius: 18px;
-            border: 3px dashed var(--ff-yellow-accent);
-            animation: resultPop 0.6s ease-out forwards;
-            backdrop-filter: blur(5px); /* Efecto de desenfoque */
-        }
-
-        @keyframes resultPop {
-            0% { transform: scale(0.9) translateY(20px); opacity: 0; }
-            70% { transform: scale(1.02) translateY(-5px); opacity: 1; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-
-        #resultado h3 {
-            font-family: 'Bangers', cursive;
-            color: var(--ff-yellow-accent);
-            text-shadow: 2px 2px 0px var(--ff-red-primary);
-            font-size: clamp(1.6rem, 3.5vw, 2.5rem);
-            margin-bottom: 20px;
-        }
-
-        .sensi-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px dashed rgba(255,255,255,0.1); /* Línea punteada */
-            font-size: 1.2rem;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .sensi-row:last-child { border-bottom: none; } /* Sin borde en el último */
-
-        .sensi-row span:last-child {
-            color: var(--ff-red-primary);
-            font-weight: bold;
-            text-shadow: 0 0 8px rgba(255, 77, 77, 0.6); /* Sombra al valor */
-        }
-
-        .back-btn {
-            display: block;
-            text-align: center;
-            margin-top: 40px;
-            color: #888;
-            text-decoration: none;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            padding: 10px 0;
-            border: 1px solid #444;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        .back-btn:hover {
-            color: var(--ff-blue-neon);
-            border-color: var(--ff-blue-neon);
-            box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
-            background: rgba(0, 234, 255, 0.05);
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0c14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Balance Semanal">
+  <link rel="manifest" href="manifest.json">
+  <title>Balance Semanal | Gestor de Deudas</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <div class="container">
-        <h1 style="text-align: center;">CODIXS GAMES</h1>
-        <div class="generator-box">
-            <h2>GENERADOR DE SENSIBILIDADES     FREE FIRE</h2>
-            <p style="color: #ccc; font-size: 1rem; margin-bottom: 30px;">¡Encuentra tu sensibilidad PERFECTA para dominar la partida!</p>
-            
-            <div class="input-group">
-                <select id="marca">
-                    <option value="Samsung">SAMSUNG</option>
-                    <option value="iPhone">IPHONE / IOS</option>
-                    <option value="Xiaomi">XIAOMI / POCO</option>
-                    <option value="Motorola">MOTOROLA</option>
-                    <option value="Huawei">HUAWEI</option>
-                    <option value="Otro">OTRO / GENÉRICO</option>
-                </select>
-
-                <input type="text" id="modelo" placeholder="¿Qué MODELO de celular tienes? (ej: Galaxy A51)">
-
-                <label class="checkbox-container">
-                    <input type="checkbox" id="usaDPI"> ¿QUIERES INCLUIR DPI?
-                </label>
-
-                <button class="btn-generate" onclick="generar()">¡GENERAR MI SENSIBILIDAD!</button>
-            </div>
-
-            <div id="resultado">
-                <h3>¡TU SENSIBILIDAD ESTÁ LISTA!</h3>
-                <div id="datos-sensi">
-                    </div>
-                <p style="font-size: 0.9rem; color: #aaa; margin-top: 25px;">
-                    * Prueba estos ajustes y levanta la mira con determinación. ¡A dar todo rojo!
-                </p>
-            </div>
+  <main class="app">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <div class="wallet-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+            <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+          </svg>
         </div>
-        
-       </div>
+        <div>
+          <h1>Balance Semanal</h1>
+          <p>Controla tus deudas y ahorro</p>
+        </div>
+      </div>
+      <div class="trend-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+          <polyline points="16 7 22 7 22 13"/>
+        </svg>
+      </div>
+    </header>
 
-    <script>
-        function generar() {
-            const marca = document.getElementById('marca').value;
-            const modelo = document.getElementById('modelo').value || "Pro";
-            const conDPI = document.getElementById('usaDPI').checked;
+    <!-- TARJETA PRINCIPAL DEGRADADA (LO QUE TE QUEDA LIBRE) -->
+    <section class="hero-card" id="heroCard">
+      <div class="hero-content">
+        <span class="hero-label">Te puedes quedar libre</span>
+        <div class="hero-amount" id="resFree">$0.00</div>
+        <div class="hero-status">
+          <span class="status-pill" id="statusPill">✓</span>
+          <span id="resAdvice">Ingresa tu ganancia y deudas</span>
+        </div>
+      </div>
+      <div class="hero-bars" aria-hidden="true">
+        <span style="height: 28%"></span>
+        <span style="height: 45%"></span>
+        <span style="height: 62%"></span>
+        <span style="height: 80%"></span>
+        <span style="height: 100%"></span>
+      </div>
+    </section>
 
-            // Valores aleatorios con un rango realista para FF
-            let general = Math.floor(Math.random() * (100 - 95) + 95); // 95-100
-            let puntoRojo = Math.floor(Math.random() * (99 - 90) + 90); // 90-99
-            let mira2x = Math.floor(Math.random() * (97 - 85) + 85);   // 85-97
-            let mira4x = Math.floor(Math.random() * (95 - 75) + 75);   // 75-95
-            let miraAwM = Math.floor(Math.random() * (35 - 15) + 15); // 15-35
-            let vista = Math.floor(Math.random() * (85 - 70) + 70);   // 70-85
-            let boton = Math.floor(Math.random() * (55 - 40) + 40);   // 40-55%
-            let dpiVal = conDPI ? Math.floor(Math.random() * (900 - 550) + 550) : "Estándar"; // 550-900
+    <!-- TARJETA DIVIDIDA (APARTAR DEUDAS VS INGRESO SEMANAL) -->
+    <section class="split-card">
+      <div class="split-col">
+        <div class="split-head">
+          <svg class="icon-purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+          </svg>
+          <span>Apartar deudas</span>
+        </div>
+        <div class="split-val" id="resWeeklyDebt">$0.00</div>
+        <small class="split-sub" id="resTotalDebt">Deuda total: $0.00</small>
+      </div>
 
-            // Lógica para iPhone
-            if(marca === 'iPhone') {
-                general = 100;
-                puntoRojo = 100;
-                mira2x = 98;
-                mira4x = 95;
-                miraAwM = 20;
-                vista = 80;
-                dpiVal = "No aplica"; // iOS no usa DPI de forma nativa para juegos
-            }
+      <div class="split-divider"></div>
 
-            const areaResultado = document.getElementById('resultado');
-            const areaDatos = document.getElementById('datos-sensi');
+      <div class="split-col">
+        <div class="split-head">
+          <svg class="icon-purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span>Ganancia semanal</span>
+        </div>
+        <div class="split-val" id="resIncome">$0.00</div>
+        <div class="progress-wrap">
+          <div class="progress-track">
+            <div class="progress-fill" id="debtProgress" style="width: 0%"></div>
+          </div>
+          <span class="progress-pct" id="debtPct">0%</span>
+        </div>
+      </div>
+    </section>
 
-            areaDatos.innerHTML = `
-                <div class="sensi-row"><span>Dispositivo:</span> <span>${marca} ${modelo}</span></div>
-                <div class="sensi-row"><span>General:</span> <span>${general}</span></div>
-                <div class="sensi-row"><span>Punto Rojo:</span> <span>${puntoRojo}</span></div>
-                <div class="sensi-row"><span>Mira 2X:</span> <span>${mira2x}</span></div>
-                <div class="sensi-row"><span>Mira 4X:</span> <span>${mira4x}</span></div>
-                <div class="sensi-row"><span>Mira AWM:</span> <span>${miraAwM}</span></div>
-                <div class="sensi-row"><span>Vista:</span> <span>${vista}</span></div>
-                <div class="sensi-row"><span>Botón Disparo:</span> <span>${boton}%</span></div>
-                <div class="sensi-row"><span>DPI Recomendado:</span> <span>${dpiVal}</span></div>
-            `;
+    <!-- BOTONES DE ACCIÓN RÁPIDA -->
+    <section class="actions-grid">
+      <button type="button" class="action-btn" id="btnOpenDebt">
+        <span class="act-circle purple">+</span>
+        <span>Agregar<br>Deuda</span>
+      </button>
+      <button type="button" class="action-btn" id="btnOpenIncome">
+        <span class="act-circle blue">$</span>
+        <span>Ingresar<br>Ganancia</span>
+      </button>
+      <button type="button" class="action-btn" id="btnPayWeek">
+        <span class="act-circle green">✓</span>
+        <span>Abonar<br>Semana</span>
+      </button>
+      <button type="button" class="action-btn" id="btnResetWeek">
+        <span class="act-circle pink">↺</span>
+        <span>Nueva<br>Semana</span>
+      </button>
+    </section>
 
-            areaResultado.style.display = 'block';
-            areaResultado.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Centra el resultado
-        }
-    </script>
+    <!-- FORMULARIO DESPLEGABLE INGRESO -->
+    <section class="drawer-card" id="incomeDrawer" hidden>
+      <div class="drawer-head">
+        <h3>¿Cuánto ganaste esta semana?</h3>
+        <button type="button" class="close-drawer" data-close="incomeDrawer">×</button>
+      </div>
+      <div class="input-group">
+        <input type="number" id="weeklyIncome" inputmode="decimal" placeholder="Ej. 3500" min="0" step="50">
+        <button type="button" class="btn-primary" id="saveIncomeBtn">Guardar</button>
+      </div>
+    </section>
+
+    <!-- FORMULARIO DESPLEGABLE DEUDA -->
+    <section class="drawer-card" id="debtDrawer" hidden>
+      <div class="drawer-head">
+        <h3>Nueva deuda o pago fijo</h3>
+        <button type="button" class="close-drawer" data-close="debtDrawer">×</button>
+      </div>
+      <form id="debtForm" class="debt-form">
+        <input type="text" id="debtName" placeholder="Nombre (Ej. Coppel, Internet, Gasolina)" required>
+        <div class="form-row">
+          <input type="number" id="debtTotal" inputmode="decimal" placeholder="Total ($)" min="1" step="10" required>
+          <input type="number" id="debtWeeks" inputmode="numeric" placeholder="Semanas" min="1" max="104" value="1" required>
+        </div>
+        <button type="submit" class="btn-primary">Agregar a mis deudas</button>
+      </form>
+    </section>
+
+    <!-- LISTA DE DEUDAS / MOVIMIENTOS -->
+    <section class="list-section">
+      <div class="list-header">
+        <h2>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Mis Deudas Activas
+        </h2>
+        <span class="list-count" id="debtCount">0 activas</span>
+      </div>
+
+      <ul id="debtList" class="debt-list"></ul>
+    </section>
+  </main>
+
+  <!-- BARRA INFERIOR ESTILO iOS -->
+  <nav class="bottom-nav">
+    <button type="button" class="nav-item active" id="navHome">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3l9-8z"/></svg>
+      <span>Inicio</span>
+    </button>
+    <button type="button" class="nav-item" id="navIncome">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span>Ingreso</span>
+    </button>
+    <button type="button" class="nav-item" id="navDebt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span>Deuda</span>
+    </button>
+  </nav>
+
+  <script src="app.js"></script>
 </body>
 </html>
