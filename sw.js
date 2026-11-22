@@ -1,7 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'balance-semanal-v2';
-
+const CACHE_NAME = 'balance-semanal-v3';
 const ASSETS = [
   './',
   './index.html',
