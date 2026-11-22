@@ -204,9 +204,10 @@ body {
 }
 
 .split-sub {
-  font-size: 0.72rem;
-  color: var(--muted);
+  font-size: 0.74rem;
+  color: var(--amber);
   margin-top: 6px;
+  font-weight: 500;
 }
 
 .progress-wrap {
@@ -271,7 +272,7 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .act-circle.purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
@@ -318,7 +319,7 @@ body {
   gap: 8px;
 }
 
-input {
+input, select {
   width: 100%;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -327,9 +328,10 @@ input {
   color: var(--text);
   font-size: 0.95rem;
   outline: none;
+  color-scheme: dark;
 }
 
-input:focus {
+input:focus, select:focus {
   border-color: #8b5cf6;
 }
 
@@ -344,19 +346,19 @@ input:focus {
   cursor: pointer;
 }
 
-/* LISTA DE DEUDAS */
+/* LISTAS */
 .list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .list-header h2 {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 1rem;
+  font-size: 0.98rem;
 }
 
 .list-header svg {
@@ -366,7 +368,7 @@ input:focus {
 }
 
 .list-count {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: #8b5cf6;
   font-weight: 600;
 }
@@ -402,14 +404,15 @@ input:focus {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1rem;
   flex-shrink: 0;
 }
 
-.c-0 { background: rgba(240, 101, 149, 0.18); color: var(--pink); }
-.c-1 { background: rgba(61, 220, 132, 0.18); color: var(--green); }
-.c-2 { background: rgba(77, 171, 247, 0.18); color: var(--blue); }
-.c-3 { background: rgba(255, 169, 77, 0.18); color: var(--amber); }
+.c-Comida, .c-1     { background: rgba(61, 220, 132, 0.18); color: var(--green); }
+.c-Transporte, .c-2 { background: rgba(77, 171, 247, 0.18); color: var(--blue); }
+.c-Personal, .c-0   { background: rgba(240, 101, 149, 0.18); color: var(--pink); }
+.c-Servicios, .c-3  { background: rgba(255, 169, 77, 0.18); color: var(--amber); }
+.c-Otro             { background: rgba(139, 92, 246, 0.18); color: #a78bfa; }
 
 .debt-meta strong {
   display: block;
@@ -425,12 +428,20 @@ input:focus {
   display: flex;
   align-items: center;
   gap: 10px;
+  text-align: right;
 }
 
 .debt-amount {
   color: var(--red);
   font-weight: 700;
   font-size: 0.92rem;
+  display: block;
+}
+
+.debt-weekly-tag {
+  font-size: 0.72rem;
+  color: #a78bfa;
+  font-weight: 600;
 }
 
 .btn-del {
